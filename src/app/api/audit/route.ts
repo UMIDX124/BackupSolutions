@@ -1,0 +1,58 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { prisma } from "@/lib/db";
+import { sendAuditConfirmation, sendAdminNotification } from "@/lib/email";
+
+const auditSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  company: z.string().optional(),
+  phone: z.string().optional(),
+  message: z.string().optional(),
+  source: z.string().optional(),
+  utmSource: z.string().optional(),
+  utmMedium: z.string().optional(),
+  utmCampaign: z.string().optional(),
+});
+
+const rateLimit = new Map<string, { count: number; resetAt: number }>();
+
+export async function POST(request: Request) {
+  try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const now = Date.now();
+    const limit = rateLimit.get(ip);
+
+    if (limit && limit.resetAt > now && limit.count >= 3) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
+    if (!limit || limit.resetAt <= now) {
+      rateLimit.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
+    } else {
+      limit.count++;
+    }
+
+    const body = await request.json();
+    const data = auditSchema.parse(body);
+
+    await prisma.auditSubmission.create({ data });
+    await sendAuditConfirmation(data.name, data.email);
+    await sendAdminNotification("audit", {
+      Name: data.name,
+      Email: data.email,
+      Company: data.company || "N/A",
+      Phone: data.phone || "N/A",
+      Message: data.message || "N/A",
+      Source: data.source || "Direct",
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.issues[0].message }, { status: 400 });
+    }
+    console.error("Audit form error:", error);
+    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+  }
+}

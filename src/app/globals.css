@@ -1,26 +1,159 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors - Obsidian Command Center */
+  --color-background: #0D0D0D;
+  --color-foreground: #FAF8F5;
+  --color-surface: #252220;
+  --color-surface-secondary: #1A1714;
+  --color-amber: #D4A853;
+  --color-amber-light: #F5D78E;
+  --color-copper: #B87333;
+  --color-sage: #7D8B6F;
+  --color-warm-gray: #A39E96;
+  --color-warm-white: #FAF8F5;
+  --color-warm-dark: #1A1714;
+
+  /* shadcn semantic tokens */
+  --color-card: #252220;
+  --color-card-foreground: #FAF8F5;
+  --color-popover: #1A1714;
+  --color-popover-foreground: #FAF8F5;
+  --color-primary: #D4A853;
+  --color-primary-foreground: #0D0D0D;
+  --color-secondary: #1A1714;
+  --color-secondary-foreground: #FAF8F5;
+  --color-muted: #252220;
+  --color-muted-foreground: #A39E96;
+  --color-accent: #252220;
+  --color-accent-foreground: #FAF8F5;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #FAF8F5;
+  --color-border: #3a3530;
+  --color-input: #3a3530;
+  --color-ring: #D4A853;
+
+  /* Typography */
+  --font-display: var(--font-outfit);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.7;
+}
+
+/* Selection */
+::selection {
+  background-color: rgb(212 168 83 / 0.3);
+  color: var(--color-warm-white);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-warm-gray);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-amber);
+}
+
+/* Prose styling for blog */
+.prose {
+  --tw-prose-body: var(--color-foreground);
+  --tw-prose-headings: var(--color-warm-white);
+  --tw-prose-links: var(--color-amber);
+  --tw-prose-bold: var(--color-warm-white);
+  --tw-prose-counters: var(--color-warm-gray);
+  --tw-prose-bullets: var(--color-amber);
+  --tw-prose-hr: var(--color-border);
+  --tw-prose-quotes: var(--color-warm-gray);
+  --tw-prose-quote-borders: var(--color-amber);
+  --tw-prose-captions: var(--color-warm-gray);
+  --tw-prose-code: var(--color-amber-light);
+  --tw-prose-pre-code: var(--color-warm-white);
+  --tw-prose-pre-bg: var(--color-surface);
+  --tw-prose-th-borders: var(--color-border);
+  --tw-prose-td-borders: var(--color-border);
+}
+
+.prose h2,
+.prose h3 {
+  scroll-margin-top: 100px;
+}
+
+/* Gradient text utility */
+.text-gradient {
+  background: linear-gradient(135deg, #D4A853 0%, #F5D78E 50%, #B87333 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass effect */
+.glass {
+  background: rgb(13 13 13 / 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgb(58 53 48 / 0.5);
+}
+
+/* Glow effects */
+.glow-amber {
+  box-shadow: 0 0 20px rgb(212 168 83 / 0.3), 0 0 60px rgb(212 168 83 / 0.1);
+}
+
+.glow-text {
+  text-shadow: 0 0 20px rgb(212 168 83 / 0.5), 0 0 40px rgb(212 168 83 / 0.2);
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgb(212 168 83 / 0.3); }
+  50% { box-shadow: 0 0 40px rgb(212 168 83 / 0.6); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
 }

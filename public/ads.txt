@@ -1,0 +1,2 @@
+# ads.txt - Authorized Digital Sellers
+# Add your ad network entries below
