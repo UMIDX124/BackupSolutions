@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
 import { sendAuditConfirmation, sendAdminNotification } from "@/lib/email";
 
 const auditSchema = z.object({
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const data = auditSchema.parse(body);
 
-    await prisma.auditSubmission.create({ data });
+    db.createAuditSubmission(data);
     await sendAuditConfirmation(data.name, data.email);
     await sendAdminNotification("audit", {
       Name: data.name,

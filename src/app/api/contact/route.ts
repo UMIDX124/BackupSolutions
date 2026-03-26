@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
 import { sendEmail, sendAdminNotification } from "@/lib/email";
 
 const contactSchema = z.object({
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const data = contactSchema.parse(body);
 
-    await prisma.contactSubmission.create({ data });
+    db.createContactSubmission(data);
 
     await sendEmail(
       data.email,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
 import { sendWelcomeEmail } from "@/lib/email";
 
 const schema = z.object({
@@ -28,12 +28,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email } = schema.parse(body);
 
-    const existing = await prisma.newsletterSubscriber.findUnique({ where: { email } });
-    if (existing) {
-      return NextResponse.json({ success: true, message: "Already subscribed!" });
-    }
-
-    await prisma.newsletterSubscriber.create({ data: { email } });
+    db.createNewsletterSubscriber(email);
     await sendWelcomeEmail(email);
 
     return NextResponse.json({ success: true });
