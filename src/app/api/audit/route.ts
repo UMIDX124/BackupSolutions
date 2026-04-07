@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { sendAuditConfirmation, sendAdminNotification } from "@/lib/email";
+import { forwardToCRM } from "@/lib/crm-webhook";
 
 const auditSchema = z.object({
   name: z.string().min(2),
@@ -45,6 +46,21 @@ export async function POST(request: Request) {
       Phone: data.phone || "N/A",
       Message: data.message || "N/A",
       Source: data.source || "Direct",
+    });
+
+    // Forward to Alpha CRM (non-blocking, fire-and-forget)
+    // BSL has in-memory DB only — CRM is the persistent store!
+    forwardToCRM({
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      company: data.company,
+      message: data.message || "Security audit request",
+      service: "Security Audit",
+      formType: "audit",
+      utmSource: data.utmSource,
+      utmMedium: data.utmMedium,
+      utmCampaign: data.utmCampaign,
     });
 
     return NextResponse.json({ success: true });

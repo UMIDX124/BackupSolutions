@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { sendEmail, sendAdminNotification } from "@/lib/email";
+import { forwardToCRM } from "@/lib/crm-webhook";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -45,6 +46,14 @@ export async function POST(request: Request) {
       Name: data.name,
       Email: data.email,
       Message: data.message,
+    });
+
+    // Forward to Alpha CRM (non-blocking, fire-and-forget)
+    forwardToCRM({
+      name: data.name,
+      email: data.email,
+      message: data.message,
+      formType: "contact",
     });
 
     return NextResponse.json({ success: true });
