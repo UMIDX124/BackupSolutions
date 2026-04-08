@@ -1,9 +1,12 @@
 // Forward BSL form submissions to the Alpha CRM webhook.
 // Non-blocking — failures must never break the website's own form flow.
 
+import { createHmac } from "crypto";
+
 const CRM_BASE_URL =
   process.env.CRM_WEBHOOK_URL || "https://fu-corp-crm.vercel.app";
 const CRM_SECRET = process.env.CRM_WEBHOOK_SECRET || "";
+const LEAD_SIGNING_SECRET = process.env.LEAD_WEBHOOK_SECRET || "";
 
 export interface CrmLeadPayload {
   name: string;
@@ -43,13 +46,19 @@ async function postToCRM(path: string, body: unknown): Promise<void> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
 
+    const serialized = JSON.stringify(body);
+    const signature = createHmac("sha256", LEAD_SIGNING_SECRET)
+      .update(serialized)
+      .digest("hex");
+
     await fetch(`${CRM_BASE_URL}${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-Webhook-Secret": CRM_SECRET,
+        "X-Webhook-Signature": `sha256=${signature}`,
       },
-      body: JSON.stringify(body),
+      body: serialized,
       signal: controller.signal,
     });
 
