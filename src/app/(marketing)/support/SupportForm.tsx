@@ -1,24 +1,17 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Send } from "lucide-react";
+import { LifeBuoy } from "lucide-react";
 
-const SERVICES = [
-  "Web Architecture",
-  "Software Engineering",
-  "AI Modeling",
-  "General Inquiry",
-] as const;
+const PRIORITIES = ["Low", "Medium", "High", "Critical"] as const;
+type Priority = (typeof PRIORITIES)[number];
 
-type ServiceOption = (typeof SERVICES)[number];
-
-export default function ContactForm() {
+export default function SupportForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [company, setCompany] = useState("");
-  const [service, setService] = useState<ServiceOption>("General Inquiry");
-  const [message, setMessage] = useState("");
+  const [subject, setSubject] = useState("");
+  const [priority, setPriority] = useState<Priority>("Medium");
+  const [description, setDescription] = useState("");
   const [status, setStatus] = useState<
     "idle" | "sending" | "sent" | "error"
   >("idle");
@@ -30,31 +23,29 @@ export default function ContactForm() {
     setErrorMessage(null);
 
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("/api/support", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
           email,
-          phone: phone || undefined,
-          company: company || undefined,
-          service,
-          message,
+          subject,
+          priority,
+          description,
         }),
       });
 
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        throw new Error(data?.error || "Failed to send");
+        throw new Error(data?.error || "Failed to submit ticket");
       }
 
       setStatus("sent");
       setName("");
       setEmail("");
-      setPhone("");
-      setCompany("");
-      setService("General Inquiry");
-      setMessage("");
+      setSubject("");
+      setPriority("Medium");
+      setDescription("");
     } catch (err) {
       setStatus("error");
       setErrorMessage(
@@ -76,11 +67,9 @@ export default function ContactForm() {
           <input
             type="text"
             id="name"
-            name="name"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
             className="w-full px-4 py-3 rounded-lg bg-surface-secondary border border-border text-foreground placeholder:text-warm-gray/50 focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber/50 transition-colors"
           />
         </div>
@@ -95,47 +84,9 @@ export default function ContactForm() {
           <input
             type="email"
             id="email"
-            name="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full px-4 py-3 rounded-lg bg-surface-secondary border border-border text-foreground placeholder:text-warm-gray/50 focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber/50 transition-colors"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="phone"
-            className="block text-sm font-medium text-foreground mb-2"
-          >
-            Phone
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+1 555 000 0000"
-            className="w-full px-4 py-3 rounded-lg bg-surface-secondary border border-border text-foreground placeholder:text-warm-gray/50 focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber/50 transition-colors"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="company"
-            className="block text-sm font-medium text-foreground mb-2"
-          >
-            Company
-          </label>
-          <input
-            type="text"
-            id="company"
-            name="company"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            placeholder="Your company"
             className="w-full px-4 py-3 rounded-lg bg-surface-secondary border border-border text-foreground placeholder:text-warm-gray/50 focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber/50 transition-colors"
           />
         </div>
@@ -143,22 +94,39 @@ export default function ContactForm() {
 
       <div>
         <label
-          htmlFor="service"
+          htmlFor="subject"
           className="block text-sm font-medium text-foreground mb-2"
         >
-          Service Interest <span className="text-amber">*</span>
+          Subject <span className="text-amber">*</span>
+        </label>
+        <input
+          type="text"
+          id="subject"
+          required
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Brief summary of the issue"
+          className="w-full px-4 py-3 rounded-lg bg-surface-secondary border border-border text-foreground placeholder:text-warm-gray/50 focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber/50 transition-colors"
+        />
+      </div>
+
+      <div>
+        <label
+          htmlFor="priority"
+          className="block text-sm font-medium text-foreground mb-2"
+        >
+          Priority <span className="text-amber">*</span>
         </label>
         <select
-          id="service"
-          name="service"
+          id="priority"
           required
-          value={service}
-          onChange={(e) => setService(e.target.value as ServiceOption)}
+          value={priority}
+          onChange={(e) => setPriority(e.target.value as Priority)}
           className="w-full px-4 py-3 rounded-lg bg-surface-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber/50 transition-colors"
         >
-          {SERVICES.map((s) => (
-            <option key={s} value={s}>
-              {s}
+          {PRIORITIES.map((p) => (
+            <option key={p} value={p}>
+              {p}
             </option>
           ))}
         </select>
@@ -166,19 +134,18 @@ export default function ContactForm() {
 
       <div>
         <label
-          htmlFor="message"
+          htmlFor="description"
           className="block text-sm font-medium text-foreground mb-2"
         >
-          Message <span className="text-amber">*</span>
+          Description <span className="text-amber">*</span>
         </label>
         <textarea
-          id="message"
-          name="message"
+          id="description"
           required
-          rows={5}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Tell us about your project..."
+          rows={6}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Describe what's happening, what you expected, and any relevant context..."
           className="w-full px-4 py-3 rounded-lg bg-surface-secondary border border-border text-foreground placeholder:text-warm-gray/50 focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber/50 transition-colors resize-none"
         />
       </div>
@@ -189,20 +156,20 @@ export default function ContactForm() {
         className="w-full inline-flex items-center justify-center gap-2 bg-amber text-background px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status === "sending" ? (
-          "Sending..."
+          "Submitting..."
         ) : status === "sent" ? (
-          "Message Sent!"
+          "Ticket Submitted!"
         ) : (
           <>
-            Send Message
-            <Send className="w-4 h-4" />
+            Submit Ticket
+            <LifeBuoy className="w-4 h-4" />
           </>
         )}
       </button>
 
       {status === "sent" && (
         <p className="text-center text-sm text-sage">
-          Thank you! We&apos;ll get back to you within 24 hours.
+          Thanks — your ticket is in. We&apos;ll be in touch shortly.
         </p>
       )}
 

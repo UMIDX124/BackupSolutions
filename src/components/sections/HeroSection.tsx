@@ -124,7 +124,7 @@ export default function HeroSection() {
         {/* Main Heading — TextReveal word by word */}
         <motion.h1
           variants={itemVariants}
-          className="font-display text-5xl md:text-6xl lg:text-7xl font-bold text-warm-white leading-tight"
+          className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-warm-white leading-tight"
         >
           <TextReveal
             text="Enterprise Technology That Never Fails"

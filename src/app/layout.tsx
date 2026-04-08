@@ -97,7 +97,7 @@ const organizationJsonLd = {
     addressLocality: "Lahore",
     addressCountry: "Pakistan",
   },
-  email: "backupsolutions1122@gmail.com",
+  email: "hello@backupsolutions.tech",
 };
 
 export default function RootLayout({

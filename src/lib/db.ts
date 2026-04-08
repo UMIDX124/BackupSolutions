@@ -41,7 +41,6 @@ class InMemoryDB {
       createdAt: new Date(),
     };
     this.auditSubmissions.push(submission);
-    console.log("[DB] Audit submission saved:", submission.email);
     return submission;
   }
 
@@ -52,7 +51,6 @@ class InMemoryDB {
       createdAt: new Date(),
     };
     this.contactSubmissions.push(submission);
-    console.log("[DB] Contact submission saved:", submission.email);
     return submission;
   }
 
@@ -67,7 +65,6 @@ class InMemoryDB {
       createdAt: new Date(),
     };
     this.newsletterSubscribers.push(subscriber);
-    console.log("[DB] Newsletter subscriber saved:", email);
     return subscriber;
   }
 }

@@ -102,7 +102,7 @@ export default function PrivacyPolicyPage() {
             <li>Lodge a complaint with a supervisory authority</li>
           </ul>
           <p className="text-warm-gray leading-relaxed mt-3">
-            To exercise any of these rights, contact us at backupsolutions1122@gmail.com.
+            To exercise any of these rights, contact us at hello@backupsolutions.tech.
           </p>
         </section>
 
@@ -140,7 +140,7 @@ export default function PrivacyPolicyPage() {
           <div className="text-warm-gray mt-3">
             <p>Backup Solutions LLC</p>
             <p>Lahore, Pakistan</p>
-            <p>Email: backupsolutions1122@gmail.com</p>
+            <p>Email: hello@backupsolutions.tech</p>
           </div>
         </section>
       </div>

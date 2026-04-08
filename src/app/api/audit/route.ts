@@ -57,7 +57,7 @@ export async function POST(request: Request) {
       company: data.company,
       message: data.message || "Security audit request",
       service: "Security Audit",
-      formType: "audit",
+      formType: "AUDIT_REQUEST",
       utmSource: data.utmSource,
       utmMedium: data.utmMedium,
       utmCampaign: data.utmCampaign,

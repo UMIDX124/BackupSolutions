@@ -8,6 +8,9 @@ const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   message: z.string().min(10, "Message must be at least 10 characters"),
+  service: z.string().optional(),
+  company: z.string().optional(),
+  phone: z.string().optional(),
 });
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
@@ -34,7 +37,11 @@ export async function POST(request: Request) {
     const body = await request.json();
     const data = contactSchema.parse(body);
 
-    db.createContactSubmission(data);
+    db.createContactSubmission({
+      name: data.name,
+      email: data.email,
+      message: data.message,
+    });
 
     await sendEmail(
       data.email,
@@ -45,6 +52,9 @@ export async function POST(request: Request) {
     await sendAdminNotification("contact", {
       Name: data.name,
       Email: data.email,
+      Phone: data.phone || "N/A",
+      Company: data.company || "N/A",
+      Service: data.service || "N/A",
       Message: data.message,
     });
 
@@ -52,8 +62,11 @@ export async function POST(request: Request) {
     forwardToCRM({
       name: data.name,
       email: data.email,
+      phone: data.phone,
+      company: data.company,
+      service: data.service,
       message: data.message,
-      formType: "contact",
+      formType: "CONTACT",
     });
 
     return NextResponse.json({ success: true });

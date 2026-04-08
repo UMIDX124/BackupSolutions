@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { sendWelcomeEmail } from "@/lib/email";
+import { forwardToCRM } from "@/lib/crm-webhook";
 
 const schema = z.object({
   email: z.string().email("Invalid email address"),
@@ -30,6 +31,13 @@ export async function POST(request: Request) {
 
     db.createNewsletterSubscriber(email);
     await sendWelcomeEmail(email);
+
+    // Forward to Alpha CRM (non-blocking, fire-and-forget)
+    forwardToCRM({
+      name: "Newsletter Subscriber",
+      email,
+      formType: "NEWSLETTER",
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

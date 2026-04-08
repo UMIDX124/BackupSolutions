@@ -12,8 +12,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "backupsolutions1122@gmail.com",
-    href: "mailto:backupsolutions1122@gmail.com",
+    value: "hello@backupsolutions.tech",
+    href: "mailto:hello@backupsolutions.tech",
   },
   {
     icon: MapPin,

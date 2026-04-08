@@ -17,6 +17,7 @@ const navLinks = [
   { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
+  { label: "Support", href: "/support" },
 ];
 
 const Navigation: React.FC = () => {

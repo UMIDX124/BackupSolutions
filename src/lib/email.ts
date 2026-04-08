@@ -16,9 +16,9 @@ const transporter = isEmailConfigured
   : null;
 
 const fromAddress =
-  process.env.EMAIL_FROM || "backupsolutions1122@gmail.com";
+  process.env.EMAIL_FROM || "hello@backupsolutions.tech";
 const adminEmail =
-  process.env.ADMIN_EMAIL || "backupsolutions1122@gmail.com";
+  process.env.ADMIN_EMAIL || "hello@backupsolutions.tech";
 
 export async function sendEmail(
   to: string,
@@ -99,7 +99,7 @@ export async function sendAuditConfirmation(
       <div style="border-top: 1px solid #252220; margin-top: 32px; padding-top: 20px; text-align: center;">
         <p style="color: #A39E96; font-size: 12px;">
           Backup Solutions LLC &bull; Lahore, Pakistan<br/>
-          <a href="mailto:backupsolutions1122@gmail.com" style="color: #D4A853;">backupsolutions1122@gmail.com</a>
+          <a href="mailto:hello@backupsolutions.tech" style="color: #D4A853;">hello@backupsolutions.tech</a>
         </p>
       </div>
     </div>
@@ -108,19 +108,21 @@ export async function sendAuditConfirmation(
 }
 
 export async function sendAdminNotification(
-  type: "audit" | "contact" | "newsletter",
+  type: "audit" | "contact" | "newsletter" | "support",
   data: Record<string, string>
 ): Promise<void> {
   const subjectMap = {
     audit: "New Consultation Request",
     contact: "New Contact Form Submission",
     newsletter: "New Newsletter Subscriber",
+    support: "New Support Ticket",
   };
 
   const emojiMap = {
     audit: "🔔",
     contact: "📩",
     newsletter: "📧",
+    support: "🎫",
   };
 
   const detailRows = Object.entries(data)
