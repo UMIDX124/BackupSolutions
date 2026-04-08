@@ -72,7 +72,7 @@ async function postToCRM(path: string, body: unknown): Promise<void> {
 }
 
 export async function forwardToCRM(payload: CrmLeadPayload): Promise<void> {
-  await postToCRM("/api/webhook/leads", {
+  await postToCRM("/api/webhook/lead", {
     ...payload,
     source: SOURCE,
     brand: BRAND,
@@ -82,7 +82,7 @@ export async function forwardToCRM(payload: CrmLeadPayload): Promise<void> {
 export async function forwardTicketToCRM(
   payload: CrmTicketPayload
 ): Promise<void> {
-  await postToCRM("/api/webhook/tickets", {
+  await postToCRM("/api/webhook/ticket", {
     ...payload,
     source: SOURCE,
     brand: BRAND,
