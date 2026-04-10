@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { forwardTicketToCRM } from "@/lib/crm-webhook";
 import { sendAdminNotification } from "@/lib/email";
+import { rateLimit } from "@/lib/ratelimit";
 
 const supportSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters"),
@@ -11,25 +12,14 @@ const supportSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
 });
 
-const rateLimit = new Map<string, { count: number; resetAt: number }>();
-
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    const now = Date.now();
-    const limit = rateLimit.get(ip);
-
-    if (limit && limit.resetAt > now && limit.count >= 5) {
+    const rl = await rateLimit("support", request, { limit: 5, windowSec: 3600 });
+    if (!rl.success) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }
       );
-    }
-
-    if (!limit || limit.resetAt <= now) {
-      rateLimit.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    } else {
-      limit.count++;
     }
 
     const body = await request.json();

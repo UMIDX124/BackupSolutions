@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { sendAuditConfirmation, sendAdminNotification } from "@/lib/email";
 import { forwardToCRM } from "@/lib/crm-webhook";
+import { rateLimit } from "@/lib/ratelimit";
 
 const auditSchema = z.object({
   name: z.string().min(2),
@@ -16,28 +17,17 @@ const auditSchema = z.object({
   utmCampaign: z.string().optional(),
 });
 
-const rateLimit = new Map<string, { count: number; resetAt: number }>();
-
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    const now = Date.now();
-    const limit = rateLimit.get(ip);
-
-    if (limit && limit.resetAt > now && limit.count >= 3) {
+    const rl = await rateLimit("audit", request, { limit: 3, windowSec: 3600 });
+    if (!rl.success) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
-    }
-
-    if (!limit || limit.resetAt <= now) {
-      rateLimit.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    } else {
-      limit.count++;
     }
 
     const body = await request.json();
     const data = auditSchema.parse(body);
 
-    db.createAuditSubmission(data);
+    await db.auditSubmission.create({ data });
     await sendAuditConfirmation(data.name, data.email);
     await sendAdminNotification("audit", {
       Name: data.name,
@@ -49,7 +39,7 @@ export async function POST(request: Request) {
     });
 
     // Forward to Alpha CRM (non-blocking, fire-and-forget)
-    // BSL has in-memory DB only — CRM is the persistent store!
+    // Forward to Alpha CRM as well
     forwardToCRM({
       name: data.name,
       email: data.email,

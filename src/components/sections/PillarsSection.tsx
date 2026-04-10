@@ -20,7 +20,7 @@ const services = [
     description:
       "High-performance websites and web applications built with modern frameworks, optimized for speed, security, and scale.",
     href: "/services/web-architecture",
-    image: "/feature-server.jpg",
+    image: "/feature-server.webp",
   },
   {
     icon: Code,
@@ -28,7 +28,7 @@ const services = [
     description:
       "Custom software development, API integrations, and backend systems designed for reliability and millions of users.",
     href: "/services/software-engineering",
-    image: "/feature-server.jpg",
+    image: "/feature-server.webp",
   },
   {
     icon: Brain,
@@ -36,7 +36,7 @@ const services = [
     description:
       "Intelligent automation, machine learning solutions, and AI-powered tools that give businesses a competitive edge.",
     href: "/services/ai-modeling",
-    image: "/feature-ai.jpg",
+    image: "/feature-ai.webp",
   },
 ];
 

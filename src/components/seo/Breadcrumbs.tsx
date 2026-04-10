@@ -11,12 +11,12 @@ export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://backupsolutions.tech" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://backupsolutions.com" },
       ...items.map((item, i) => ({
         "@type": "ListItem",
         position: i + 2,
         name: item.label,
-        ...(item.href ? { item: `https://backupsolutions.tech${item.href}` } : {}),
+        ...(item.href ? { item: `https://backupsolutions.com${item.href}` } : {}),
       })),
     ],
   };

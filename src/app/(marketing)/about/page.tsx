@@ -130,7 +130,7 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
-              src="/about.jpg"
+              src="/about.webp"
               alt="Backup Solutions team workspace"
               fill
               className="object-cover"

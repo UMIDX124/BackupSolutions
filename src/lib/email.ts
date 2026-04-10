@@ -16,9 +16,9 @@ const transporter = isEmailConfigured
   : null;
 
 const fromAddress =
-  process.env.EMAIL_FROM || "hello@backupsolutions.tech";
+  process.env.EMAIL_FROM || "hello@backupsolutions.com";
 const adminEmail =
-  process.env.ADMIN_EMAIL || "hello@backupsolutions.tech";
+  process.env.ADMIN_EMAIL || "hello@backupsolutions.com";
 
 export async function sendEmail(
   to: string,
@@ -55,12 +55,12 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
         <li>Case studies and real-world results</li>
       </ul>
       <p style="color: #A39E96; line-height: 1.6;">
-        In the meantime, check out our <a href="https://backupsolutions.tech/blog" style="color: #D4A853;">latest blog posts</a>.
+        In the meantime, check out our <a href="https://backupsolutions.com/blog" style="color: #D4A853;">latest blog posts</a>.
       </p>
       <div style="border-top: 1px solid #252220; margin-top: 32px; padding-top: 20px; text-align: center;">
         <p style="color: #A39E96; font-size: 12px;">
           Backup Solutions LLC &bull; Lahore, Pakistan<br/>
-          <a href="https://backupsolutions.tech" style="color: #D4A853;">backupsolutions.tech</a>
+          <a href="https://backupsolutions.com" style="color: #D4A853;">backupsolutions.com</a>
         </p>
       </div>
     </div>
@@ -99,7 +99,7 @@ export async function sendAuditConfirmation(
       <div style="border-top: 1px solid #252220; margin-top: 32px; padding-top: 20px; text-align: center;">
         <p style="color: #A39E96; font-size: 12px;">
           Backup Solutions LLC &bull; Lahore, Pakistan<br/>
-          <a href="mailto:hello@backupsolutions.tech" style="color: #D4A853;">hello@backupsolutions.tech</a>
+          <a href="mailto:hello@backupsolutions.com" style="color: #D4A853;">hello@backupsolutions.com</a>
         </p>
       </div>
     </div>
@@ -147,7 +147,7 @@ export async function sendAdminNotification(
         ${detailRows}
       </table>
       <p style="color: #A39E96; font-size: 12px; margin-top: 24px;">
-        Received at ${new Date().toISOString()} via backupsolutions.tech
+        Received at ${new Date().toISOString()} via backupsolutions.com
       </p>
     </div>
     `

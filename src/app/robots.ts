@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/_next/"],
       },
     ],
-    sitemap: "https://backupsolutions.tech/sitemap.xml",
+    sitemap: "https://backupsolutions.com/sitemap.xml",
   };
 }

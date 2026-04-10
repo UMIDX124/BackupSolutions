@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { sendEmail, sendAdminNotification } from "@/lib/email";
 import { forwardToCRM } from "@/lib/crm-webhook";
+import { rateLimit } from "@/lib/ratelimit";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -13,34 +14,25 @@ const contactSchema = z.object({
   phone: z.string().optional(),
 });
 
-const rateLimit = new Map<string, { count: number; resetAt: number }>();
-
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    const now = Date.now();
-    const limit = rateLimit.get(ip);
-
-    if (limit && limit.resetAt > now && limit.count >= 5) {
+    const rl = await rateLimit("contact", request, { limit: 5, windowSec: 3600 });
+    if (!rl.success) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }
       );
     }
 
-    if (!limit || limit.resetAt <= now) {
-      rateLimit.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    } else {
-      limit.count++;
-    }
-
     const body = await request.json();
     const data = contactSchema.parse(body);
 
-    db.createContactSubmission({
-      name: data.name,
-      email: data.email,
-      message: data.message,
+    await db.contactSubmission.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        message: data.message,
+      },
     });
 
     await sendEmail(

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Need help? Open a support ticket with the Backup Solutions team and we'll get back to you as soon as possible.",
   alternates: {
-    canonical: "https://backupsolutions.tech/support",
+    canonical: "https://backupsolutions.com/support",
   },
 };
 

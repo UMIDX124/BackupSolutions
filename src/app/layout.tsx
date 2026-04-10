@@ -22,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://backupsolutions.tech"),
+  metadataBase: new URL("https://backupsolutions.com"),
   title: {
     default: "Backup Solutions | Enterprise Technology That Never Fails",
     template: "%s | Backup Solutions",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://backupsolutions.tech",
+    url: "https://backupsolutions.com",
     siteName: "Backup Solutions",
     title: "Backup Solutions | Enterprise Technology That Never Fails",
     description:
@@ -75,8 +75,8 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Backup Solutions",
-  url: "https://backupsolutions.tech",
-  logo: "https://backupsolutions.tech/logo.png",
+  url: "https://backupsolutions.com",
+  logo: "https://backupsolutions.com/logo.png",
   description:
     "Pakistan's leading tech company serving global markets since 2018.",
   foundingDate: "2018",
@@ -97,7 +97,7 @@ const organizationJsonLd = {
     addressLocality: "Lahore",
     addressCountry: "Pakistan",
   },
-  email: "hello@backupsolutions.tech",
+  email: "hello@backupsolutions.com",
 };
 
 export default function RootLayout({

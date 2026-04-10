@@ -138,7 +138,7 @@ export default function TermsOfServicePage() {
           <div className="text-warm-gray mt-3">
             <p>Backup Solutions LLC</p>
             <p>Lahore, Pakistan</p>
-            <p>Email: hello@backupsolutions.tech</p>
+            <p>Email: hello@backupsolutions.com</p>
           </div>
         </section>
       </div>

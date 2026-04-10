@@ -1,77 +1,31 @@
-// In-memory store for form submissions
-// Replace with a real database (Neon Postgres, Supabase, etc.) for production persistence
+import { PrismaClient } from "@prisma/client";
+import { PrismaNeon } from "@prisma/adapter-neon";
 
-interface AuditSubmission {
-  id: string;
-  name: string;
-  email: string;
-  company?: string;
-  phone?: string;
-  message?: string;
-  source?: string;
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-  createdAt: Date;
-}
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
-interface ContactSubmission {
-  id: string;
-  name: string;
-  email: string;
-  message: string;
-  createdAt: Date;
-}
-
-interface NewsletterSubscriber {
-  id: string;
-  email: string;
-  createdAt: Date;
-}
-
-class InMemoryDB {
-  auditSubmissions: AuditSubmission[] = [];
-  contactSubmissions: ContactSubmission[] = [];
-  newsletterSubscribers: NewsletterSubscriber[] = [];
-
-  createAuditSubmission(data: Omit<AuditSubmission, "id" | "createdAt">) {
-    const submission = {
-      ...data,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-    };
-    this.auditSubmissions.push(submission);
-    return submission;
+function createPrismaClient() {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    return new Proxy({} as PrismaClient, {
+      get(_target, prop) {
+        if (prop === "$connect" || prop === "$disconnect" || prop === "then") return undefined;
+        throw new Error("Database not configured. Set DATABASE_URL environment variable.");
+      },
+    });
   }
 
-  createContactSubmission(data: Omit<ContactSubmission, "id" | "createdAt">) {
-    const submission = {
-      ...data,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-    };
-    this.contactSubmissions.push(submission);
-    return submission;
+  if (url.startsWith("postgresql://") || url.startsWith("postgres://")) {
+    const adapter = new PrismaNeon({ connectionString: url });
+    return new PrismaClient({ adapter });
   }
 
-  createNewsletterSubscriber(email: string) {
-    const existing = this.newsletterSubscribers.find((s) => s.email === email);
-    if (existing) {
-      return existing;
-    }
-    const subscriber = {
-      id: crypto.randomUUID(),
-      email,
-      createdAt: new Date(),
-    };
-    this.newsletterSubscribers.push(subscriber);
-    return subscriber;
-  }
+  return new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["query"] : [],
+  });
 }
 
-const globalForDB = globalThis as unknown as { db: InMemoryDB | undefined };
-export const db = globalForDB.db ?? new InMemoryDB();
+export const db = globalForPrisma.prisma || createPrismaClient();
 
-if (process.env.NODE_ENV !== "production") {
-  globalForDB.db = db;
-}
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+
+export default db;

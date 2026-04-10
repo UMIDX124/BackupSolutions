@@ -4,7 +4,7 @@ import { getAllCaseStudies } from "@/lib/case-studies";
 import { comparisons } from "@/lib/comparisons";
 import { guides } from "@/lib/guides";
 
-const BASE_URL = "https://backupsolutions.tech";
+const BASE_URL = "https://backupsolutions.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts();

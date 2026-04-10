@@ -3,33 +3,27 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { sendWelcomeEmail } from "@/lib/email";
 import { forwardToCRM } from "@/lib/crm-webhook";
+import { rateLimit } from "@/lib/ratelimit";
 
 const schema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
-const rateLimit = new Map<string, { count: number; resetAt: number }>();
-
 export async function POST(request: Request) {
   try {
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    const now = Date.now();
-    const limit = rateLimit.get(ip);
-
-    if (limit && limit.resetAt > now && limit.count >= 10) {
+    const rl = await rateLimit("newsletter", request, { limit: 10, windowSec: 3600 });
+    if (!rl.success) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
-    }
-
-    if (!limit || limit.resetAt <= now) {
-      rateLimit.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    } else {
-      limit.count++;
     }
 
     const body = await request.json();
     const { email } = schema.parse(body);
 
-    db.createNewsletterSubscriber(email);
+    await db.newsletterSubscriber.upsert({
+      where: { email },
+      update: {},
+      create: { email },
+    });
     await sendWelcomeEmail(email);
 
     // Forward to Alpha CRM (non-blocking, fire-and-forget)

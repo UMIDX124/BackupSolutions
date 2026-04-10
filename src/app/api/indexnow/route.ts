@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 const INDEXNOW_KEY = "backup-solutions-indexnow-key-2025";
-const HOST = "backupsolutions.tech";
+const HOST = "backupsolutions.com";
 
 export async function POST(request: Request) {
   try {
