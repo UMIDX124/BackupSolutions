@@ -119,6 +119,11 @@ export default function RootLayout({
         />
         {children}
         <Toaster richColors position="bottom-right" />
+        <script
+          src="https://alpha-command-center.vercel.app/tracker.js"
+          data-key="cmmsabwnn0005rgw4dphjib9x"
+          defer
+        />
       </body>
     </html>
   );
